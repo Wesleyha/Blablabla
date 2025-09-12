@@ -1,37 +1,38 @@
-// server.js
 import express from "express";
-import fetch from "node-fetch";
 import cors from "cors";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import OpenAI from "openai";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 10000; // Render usa porta própria
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
+// Rota do chatbot
 app.post("/chat", async (req, res) => {
-  const { message } = req.body;
-
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: message }]
-      })
+    const { message } = req.body;
+
+    const response = await client.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: message }],
     });
 
-    const data = await response.json();
-    res.json({ reply: data.choices[0].message.content });
+    res.json({ reply: response.choices[0].message.content });
   } catch (error) {
-    res.status(500).json({ error: "Erro na IA" });
+    console.error(error);
+    res.status(500).json({ reply: "Erro ao processar mensagem." });
   }
 });
 
+// Porta Render
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
