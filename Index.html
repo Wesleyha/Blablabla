@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog sobre Racismo Ambiental</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; line-height: 1.6; }
+    header, footer { background-color: #2c7a7b; color: white; text-align: center; padding: 20px; position: relative; }
+    main { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+    .post { background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .post h2 { margin-top: 0; color: #2c7a7b; }
+    ul { padding-left: 20px; }
+    a { color: #2c7a7b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Menu hambúrguer */
+    .menu-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 28px; }
+    .menu { display: none; position: absolute; top: 60px; right: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .menu a { display: block; padding: 10px 20px; color: #2c7a7b; font-weight: bold; }
+    .menu a:hover { background: #e6f2f2; }
+    .active { display: block; }
+
+    /* Seções */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Ler mais */
+    .more-text { display: none; margin-top: 10px; }
+    .read-more { background: #2c7a7b; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 6px; margin-top: 10px; }
+    .read-more:hover { background: #25696a; }
+
+    /* Chatbot flutuante */
+    #chat-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2c7a7b;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+
+    #chat-container {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      overflow: hidden;
+      flex-direction: column;
+      z-index: 999;
+    }
+
+    #chat-header {
+      background: #2c7a7b;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-messages {
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .msg {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .user { background: #e6f2f2; text-align: right; }
+    .bot { background: #f2f2f2; text-align: left; }
+
+    #chat-input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+    }
+
+    #send-btn {
+      background: #2c7a7b;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Blog Educativo sobre Racismo Ambiental</h1>
+    <!-- Botão do menu -->
+    <div class="menu-btn" id="menuBtn">☰</div>
+    <!-- Menu suspenso -->
+    <div class="menu" id="menu">
+      <a href="#" onclick="showSection('posts')">Posts</a>
+      <a href="#" onclick="showSection('jogos')">Jogos</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- SEU CONTEÚDO DE POSTS E JOGOS (igual você mandou antes) -->
+    <!-- Não alterei nada, deixei do mesmo jeito -->
+  </main>
+
+  <footer>
+    © 2025 Blog Educativo sobre Racismo Ambiental
+  </footer>
+
+  <!-- Botão flutuante -->
+  <div id="chat-button">💬</div>
+
+  <!-- Janela do chat -->
+  <div id="chat-container">
+    <div id="chat-header">🤖 Chat IA 
+      <span id="close-chat" style="cursor:pointer;">✖</span>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+      <button id="send-btn">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const menu = document.getElementById("menu");
+
+    menuBtn.addEventListener("click", () => {
+      menu.classList.toggle("active");
+    });
+
+    function showSection(sectionId) {
+      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(sectionId).classList.add("active");
+      menu.classList.remove("active");
+    }
+
+    // Botão "Ler mais"
+    document.querySelectorAll(".read-more").forEach(button => {
+      button.addEventListener("click", () => {
+        const moreText = button.previousElementSibling;
+        if (moreText.style.display === "none" || moreText.style.display === "") {
+          moreText.style.display = "block";
+          button.textContent = "Ler menos";
+        } else {
+          moreText.style.display = "none";
+          button.textContent = "Ler mais";
+        }
+      });
+    });
+
+    // --- Chatbot ---
+    const chatBtn = document.getElementById("chat-button");
+    const chatBox = document.getElementById("chat-container");
+    const closeChat = document.getElementById("close-chat");
+    const sendBtn = document.getElementById("send-btn");
+    const chatInput = document.getElementById("chat-input");
+    const chatMessages = document.getElementById("chat-messages");
+
+    chatBtn.onclick = () => chatBox.style.display = "flex";
+    closeChat.onclick = () => chatBox.style.display = "none";
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      // mostra mensagem do usuário
+      const userMsg = document.createElement("div");
+      userMsg.className = "msg user";
+      userMsg.textContent = text;
+      chatMessages.appendChild(userMsg);
+      chatInput.value = "";
+
+      // chama backend Render
+      try {
+        const res = await fetch("https://seu-backend.onrender.com/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+
+        const botMsg = document.createElement("div");
+        botMsg.className = "msg bot";
+        botMsg.textContent = data.reply || "Erro na resposta";
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (err) {
+        const botMsg = document.createElement("div");
+        botMsg.className = "msg bot";
+        botMsg.textContent = "❌ Erro ao conectar com a IA.";
+        chatMessages.appendChild(botMsg);
+      }
+    }
+
+    sendBtn.onclick = sendMessage;
+    chatInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+  </html>
+  
