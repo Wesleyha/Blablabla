@@ -1,32 +1,44 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
+import OpenAI from "openai";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const OPENAI_API_KEY = "COLE_SUA_API_KEY_AQUI";
+// Configura a OpenAI com a variável de ambiente
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
+// Rota do chat
 app.post("/chat", async (req, res) => {
-  const { message } = req.body;
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: message }]
-      }),
+    const { message } = req.body;
+
+    if (!message) {
+      return res.json({ reply: "Não recebi nenhuma mensagem." });
+    }
+
+    // Chamada à API da OpenAI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo", // ou "gpt-4" se disponível
+      messages: [
+        { role: "system", content: "Você é um assistente educacional sobre racismo ambiental." },
+        { role: "user", content: message }
+      ]
     });
-    const data = await response.json();
-    res.json({ reply: data.choices[0].message.content });
-  } catch (err) {
-    res.json({ reply: "Erro ao acessar a IA" });
+
+    const botReply = completion.choices[0].message.content;
+
+    res.json({ reply: botReply });
+  } catch (error) {
+    console.error("Erro no servidor:", error);
+    res.status(500).json({ reply: "Desculpe, houve um erro no servidor." });
   }
 });
 
-app.listen(3000, () => console.log("Servidor rodando"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
