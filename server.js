@@ -1,34 +1,49 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import OpenAI from "openai";
 
-dotenv.config();
-
 const app = express();
-app.use(cors({ origin: "*" }));
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Configuração da OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
 
+// Rota para o chat
 app.post("/chat", async (req, res) => {
-  try {
-    const { message } = req.body;
+  const { message } = req.body;
 
-    const response = await client.chat.completions.create({
+  if (!message || message.trim() === "") {
+    return res.status(400).json({ reply: "Mensagem vazia não é permitida." });
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
+      messages: [
+        { role: "system", content: "Você é um assistente especializado em racismo ambiental." },
+        { role: "user", content: message }
+      ]
     });
 
-    res.json({ reply: response.choices[0].message.content });
+    const reply = response.choices[0].message.content;
+    res.json({ reply });
   } catch (error) {
-    console.error(error); // Aqui você consegue ver o erro real nos logs
-    res.status(500).json({ reply: "Erro ao processar mensagem." });
+    console.error(error);
+
+    // Tratamento de erros
+    if (error.code === 429) {
+      res.json({ reply: "Erro: limite de requisições atingido. Tente novamente mais tarde." });
+    } else if (error.code === 401) {
+      res.json({ reply: "Erro: token inválido. Verifique sua chave API." });
+    } else {
+      res.json({ reply: "Erro ao processar a mensagem. Tente novamente." });
+    }
   }
 });
 
-const PORT = process.env.PORT || 10000;
+// Inicia o servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
